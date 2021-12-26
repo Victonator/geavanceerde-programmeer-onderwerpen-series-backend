@@ -33,4 +33,4 @@ jobs:
         run: docker build -t ${{ secrets.DOCKER_USER }}/geavanceerde-programmeer-onderwerpen-series-backend:latest .
 
       - name: Upload container to Docker Hub with Push
-        run: docker push ${{ secrets.DOCKER_USER }}/ggeavanceerde-programmeer-onderwerpen-series-backend:latest
+        run: docker push ${{ secrets.DOCKER_USER }}/geavanceerde-programmeer-onderwerpen-series-backend:latest
