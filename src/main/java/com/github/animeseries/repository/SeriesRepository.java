@@ -10,4 +10,11 @@ import java.util.List;
 public interface SeriesRepository extends MongoRepository<Series, String> {
     Series findSeriesById(String id);
     List<Series> findSeriesByStudioId(Integer studioId);
+    List<Series> findSeriesByIsMovie(Boolean isMovie);
+    List<Series> findSeriesByGenre(String genre);
+    List<Series> findSeriesByGenreContainingIgnoreCase(String genreQuery);
+    List<Series> findSeriesByYearAired(Integer yearAired);
+    List<Series> findSeriesByYearAiredBetween(Integer lowerBound, Integer upperBound);
+    List<Series> findSeriesByNameContainingIgnoreCase(String nameQuery);
+    List<Series> findSeriesByNameContainingIgnoreCaseAndIsMovie(String nameQuery, Boolean isMovie);
 }

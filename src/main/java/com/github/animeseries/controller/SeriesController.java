@@ -3,7 +3,12 @@ package com.github.animeseries.controller;
 import com.github.animeseries.model.Series;
 import com.github.animeseries.repository.SeriesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -18,13 +23,28 @@ public class SeriesController {
     public void fillDB() {
         seriesRepository.deleteAll();
         if(seriesRepository.count()==0) {
-            seriesRepository.save(new Series(1, "Your name", false, 12, "2012"));
+            seriesRepository.save(new Series(1, "Your name", "drama", true, 1, 2016));
+            seriesRepository.save(new Series(2, "Jujutsu Kaisen", "supernatural", false, 24, 1, 2020));
+            seriesRepository.save(new Series(2, "The Idaten Deities Know Only Peace", "action", false, 11, 1, 2021));
+            seriesRepository.save(new Series(3, "Demon Slayer: Kimetsu no Yaiba", "adventure", false, 26, 1, 2019));
+            seriesRepository.save(new Series(3, "Demon Slayer: Kimetsu no Yaiba - Entertainment District Arc", "adventure", false, 5, 2021));
         }
     }
 
-    @GetMapping("/series/{id}")
-    public Series getSeriesById(@PathVariable String id) {
-        return seriesRepository.findSeriesById(id);
+    @GetMapping("/series")
+    @ResponseBody
+    public List<Series> getSeriesByIsMovie(
+            @RequestParam(required = false) Boolean isMovie,
+            @RequestParam(required = false, name = "q") String nameQuery
+    ) {
+        int caseSelector = ((isMovie == null) ? 0 : 1) + ((nameQuery == null) ? 0 : 2);
+
+        switch(caseSelector) {
+            case 1: return seriesRepository.findSeriesByIsMovie(isMovie);
+            case 2: return seriesRepository.findSeriesByNameContainingIgnoreCase(nameQuery);
+            case 3: return seriesRepository.findSeriesByNameContainingIgnoreCaseAndIsMovie(nameQuery, isMovie);
+            default: return seriesRepository.findAll();
+        }
     }
 
     @GetMapping("/series/studio/{studioId}")
@@ -32,22 +52,62 @@ public class SeriesController {
         return seriesRepository.findSeriesByStudioId(studioId);
     }
 
-    @GetMapping("/series")
-    public List<Series> getSeries() {
-        System.out.println("You requested all series...");
-        List<Series> series = seriesRepository.findAll();
-        System.out.println(series.size());
-        if(series.size()>0) {
-            Series serie = ((Series) series.get(0));
-            System.out.println(serie.getId());
-            System.out.println(serie.getName());
+    @GetMapping("/series/year")
+    @ResponseBody
+    public List<Series> getSeriesByYearBetween(
+            @RequestParam(required = false) Integer lowerBound,
+            @RequestParam(required = false) Integer upperBound) {
+        int caseSelector = ((lowerBound == null) ? 0 : 1) + ((upperBound == null) ? 0 : 2);
+
+        switch (caseSelector) {
+            case 1: return seriesRepository.findSeriesByYearAiredBetween(lowerBound, 99999);
+            case 2: return seriesRepository.findSeriesByYearAiredBetween(0, upperBound);
+            case 3: return seriesRepository.findSeriesByYearAiredBetween(lowerBound, upperBound);
+            default: return seriesRepository.findAll();
         }
-        return series;
+    }
+
+    @GetMapping("/series/year/{year}")
+    public List<Series> getSeriesByYear(@PathVariable Integer year) {
+        return seriesRepository.findSeriesByYearAired(year);
+    }
+
+    @GetMapping("/series/genre/{genre}")
+    public List<Series> getSeriesByGenre(@PathVariable String genre) {
+        return seriesRepository.findSeriesByGenre(genre);
+    }
+
+    @GetMapping("/series/genre")
+    @ResponseBody
+    public List<Series> searchSeriesByGenre(@RequestParam(name = "q") String genreQuery) {
+        return seriesRepository.findSeriesByGenreContainingIgnoreCase(genreQuery);
     }
 
     @PostMapping("/series")
     public Series addSeries(@RequestBody Series series) {
         seriesRepository.save(series);
         return series;
+    }
+
+    @PutMapping("/series/{id}")
+    public Series modifySeries(@RequestBody Series series, @PathVariable String id) {
+        Series oldSeries = seriesRepository.findSeriesById(id);
+
+        oldSeries.setStudioId(series.getStudioId());
+        oldSeries.setName(series.getName());
+        oldSeries.setMovie(series.getMovie());
+        oldSeries.setEpisodes(series.getEpisodes());
+        oldSeries.setYearAired(series.getYearAired());
+
+        if(series.getGenre() != null) oldSeries.setGenre(series.getGenre());
+        if(series.getSeason() != null) oldSeries.setSeason(series.getSeason());
+
+        seriesRepository.save(oldSeries);
+        return oldSeries;
+    }
+
+    @DeleteMapping("/series/{id}")
+    public void deleteSeries(@PathVariable String id) {
+        seriesRepository.deleteById(id);
     }
 }

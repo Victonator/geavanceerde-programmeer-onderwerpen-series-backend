@@ -9,16 +9,48 @@ public class Series {
     private String id;
     private Integer studioId;
     private String name;
+    private String genre;
     private Boolean isMovie;
     private Integer episodes;
-    private String dateAired;
+    private Integer season;
+    private Integer yearAired;
 
-    public Series(Integer studioId, String name, Boolean isMovie, Integer episodes, String dateAired) {
+    public Series(){};
+
+    public Series(Integer studioId, String name, Boolean isMovie, Integer episodes, Integer yearAired) {
         this.studioId = studioId;
         this.name = name;
         this.isMovie = isMovie;
         this.episodes = episodes;
-        this.dateAired = dateAired;
+        this.yearAired = yearAired;
+    }
+
+    public Series(Integer studioId, String name, String genre, Boolean isMovie, Integer episodes, Integer yearAired) {
+        this.studioId = studioId;
+        this.name = name;
+        this.genre = genre;
+        this.isMovie = isMovie;
+        this.episodes = episodes;
+        this.yearAired = yearAired;
+    }
+
+    public Series(Integer studioId, String name, Boolean isMovie, Integer episodes, Integer season, Integer yearAired) {
+        this.studioId = studioId;
+        this.name = name;
+        this.isMovie = isMovie;
+        this.episodes = episodes;
+        this.season = season;
+        this.yearAired = yearAired;
+    }
+
+    public Series(Integer studioId, String name, String genre, Boolean isMovie, Integer episodes, Integer season, Integer yearAired) {
+        this.studioId = studioId;
+        this.name = name;
+        this.genre = genre;
+        this.isMovie = isMovie;
+        this.episodes = episodes;
+        this.season = season;
+        this.yearAired = yearAired;
     }
 
     public String getId() {
@@ -41,6 +73,22 @@ public class Series {
         this.name = name;
     }
 
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public Boolean getMovie() {
+        return isMovie;
+    }
+
+    public void setMovie(Boolean movie) {
+        isMovie = movie;
+    }
+
     public Integer getEpisodes() {
         return episodes;
     }
@@ -49,11 +97,19 @@ public class Series {
         this.episodes = episodes;
     }
 
-    public String getDateAired() {
-        return dateAired;
+    public Integer getSeason() {
+        return season;
     }
 
-    public void setDateAired(String dateAired) {
-        this.dateAired = dateAired;
+    public void setSeason(Integer season) {
+        this.season = season;
+    }
+
+    public Integer getYearAired() {
+        return yearAired;
+    }
+
+    public void setYearAired(Integer yearAired) {
+        this.yearAired = yearAired;
     }
 }
