@@ -57,6 +57,10 @@ public class Series {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public Integer getStudioId() {
         return studioId;
     }
