@@ -3,7 +3,6 @@ package com.github.animeseries.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.animeseries.model.Series;
 import com.github.animeseries.repository.SeriesRepository;
-import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -20,8 +18,6 @@ import static org.hamcrest.Matchers.containsStringIgnoringCase;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -266,6 +262,20 @@ class SeriesControllerUnitTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.genre").value("romance"));
+
+
+        Series seriesStudio2Series1Mod = new Series(2, "Jujutsu Kaisen", false, 25, 2020);
+
+        given(seriesRepository.findSeriesById("555544443333222211110000")).willReturn(seriesStudio2Series1);
+
+        mockMvc.perform(put("/series/{id}", "555544443333222211110000")
+                        .content(mapper.writeValueAsString(seriesStudio2Series1Mod))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.episodes").value(25))
+                .andExpect(jsonPath("$.genre").value(containsStringIgnoringCase("supernatural")))
+                .andExpect(jsonPath("$.season").value(1));
     }
 
     @Test

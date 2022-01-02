@@ -13,8 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultHandler;
-import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -22,7 +20,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 
@@ -237,6 +234,21 @@ class SeriesControllerIntegrationTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.genre").value("romance"));
+
+
+        Series seriesStudio2Series1 = new Series(2, "Jujutsu Kaisen", false, 25, 2020);
+
+        result = mockMvc.perform(get("/series?q=jujutsu kaisen")).andReturn();
+        seriesId = JsonPath.read(result.getResponse().getContentAsString(), "$[0].id");
+
+        mockMvc.perform(put("/series/{id}", seriesId)
+                .content(mapper.writeValueAsString(seriesStudio2Series1))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.episodes").value(25))
+                .andExpect(jsonPath("$.genre").value(containsStringIgnoringCase("supernatural")))
+                .andExpect(jsonPath("$.season").value(1));
     }
 
     @Test

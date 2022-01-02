@@ -3,12 +3,7 @@ package com.github.animeseries.controller;
 import com.github.animeseries.model.Series;
 import com.github.animeseries.repository.SeriesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -22,13 +17,13 @@ public class SeriesController {
     @PostConstruct
     public void fillDB() {
         seriesRepository.deleteAll();
-        if(seriesRepository.count()==0) {
-            seriesRepository.save(new Series(1, "Your name", "drama", true, 1, 2016));
-            seriesRepository.save(new Series(2, "Jujutsu Kaisen", "supernatural", false, 24, 1, 2020));
-            seriesRepository.save(new Series(2, "The Idaten Deities Know Only Peace", "action", false, 11, 1, 2021));
-            seriesRepository.save(new Series(3, "Demon Slayer: Kimetsu no Yaiba", "adventure", false, 26, 1, 2019));
-            seriesRepository.save(new Series(3, "Demon Slayer: Kimetsu no Yaiba - Entertainment District Arc", "adventure", false, 5, 2021));
-        }
+
+        seriesRepository.save(new Series(1, "Your name", "drama", true, 1, 2016));
+        seriesRepository.save(new Series(2, "Jujutsu Kaisen", "supernatural", false, 24, 1, 2020));
+        seriesRepository.save(new Series(2, "The Idaten Deities Know Only Peace", "action", false, 11, 1, 2021));
+        seriesRepository.save(new Series(3, "Demon Slayer: Kimetsu no Yaiba", "adventure", false, 26, 1, 2019));
+        seriesRepository.save(new Series(3, "Demon Slayer: Kimetsu no Yaiba - Entertainment District Arc", "adventure", false, 5, 2021));
+
     }
 
     @GetMapping("/series")
