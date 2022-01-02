@@ -236,7 +236,7 @@ class SeriesControllerIntegrationTests {
                 .andExpect(jsonPath("$.genre").value("romance"));
 
 
-        Series seriesStudio2Series1 = new Series(2, "Jujutsu Kaisen", false, 25, 2020);
+        Series seriesStudio2Series1 = new Series(2, "Jujutsu Kaisen", false, 25, 1, 2020);
 
         result = mockMvc.perform(get("/series?q=jujutsu kaisen")).andReturn();
         seriesId = JsonPath.read(result.getResponse().getContentAsString(), "$[0].id");
@@ -247,8 +247,7 @@ class SeriesControllerIntegrationTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.episodes").value(25))
-                .andExpect(jsonPath("$.genre").value(containsStringIgnoringCase("supernatural")))
-                .andExpect(jsonPath("$.season").value(1));
+                .andExpect(jsonPath("$.genre").value(containsStringIgnoringCase("supernatural")));
     }
 
     @Test
