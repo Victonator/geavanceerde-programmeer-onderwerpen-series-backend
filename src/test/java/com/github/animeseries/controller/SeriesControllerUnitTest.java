@@ -31,11 +31,11 @@ class SeriesControllerUnitTest {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    private Series seriesStudio1Movie1 = new Series(1, "Your name", "drama", true, 1, 2016);
-    private Series seriesStudio2Series1 = new Series(2, "Jujutsu Kaisen", "supernatural", false, 24, 1, 2020);
-    private Series seriesStudio2Series2 = new Series(2, "The Idaten Deities Know Only Peace", "action", false, 11, 1, 2021);
-    private Series seriesStudio3Series3 = new Series(3, "Demon Slayer: Kimetsu no Yaiba", "adventure", false, 26, 1, 2019);
-    private Series seriesStudio3Series4 = new Series(3, "Demon Slayer: Kimetsu no Yaiba - Entertainment District Arc", "adventure", false, 5, 2021);
+    private Series seriesStudio1Movie1 = new Series("CoMix Wave Films", "Your name", "drama", true, 1, 2016);
+    private Series seriesStudio2Series1 = new Series("MAPPA", "Jujutsu Kaisen", "supernatural", false, 24, 1, 2020);
+    private Series seriesStudio2Series2 = new Series("MAPPA", "The Idaten Deities Know Only Peace", "action", false, 11, 1, 2021);
+    private Series seriesStudio3Series3 = new Series("Ufotable", "Demon Slayer: Kimetsu no Yaiba", "adventure", false, 26, 1, 2019);
+    private Series seriesStudio3Series4 = new Series("Ufotable", "Demon Slayer: Kimetsu no Yaiba - Entertainment District Arc", "adventure", false, 5, 2021);
 
     @Test
     public void givenSeries_whenGetAllSeries_thenReturnJsonSeries() throws Exception {
@@ -90,21 +90,21 @@ class SeriesControllerUnitTest {
         seriesStudio3List.add(seriesStudio3Series3);
         seriesStudio3List.add(seriesStudio3Series4);
 
-        given(seriesRepository.findSeriesByStudioId(1)).willReturn(seriesStudio1List);
-        given(seriesRepository.findSeriesByStudioId(3)).willReturn(seriesStudio3List);
+        given(seriesRepository.findSeriesByStudioContainingIgnoreCase("comix wave films")).willReturn(seriesStudio1List);
+        given(seriesRepository.findSeriesByStudioContainingIgnoreCase("ufotable")).willReturn(seriesStudio3List);
 
-        mockMvc.perform(get("/series/studio/1"))
+        mockMvc.perform(get("/series/studio/comix wave films"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].studioId").value(1));
+                .andExpect(jsonPath("$[0].studio").value(containsStringIgnoringCase("comix wave films")));
 
-        mockMvc.perform(get("/series/studio/3"))
+        mockMvc.perform(get("/series/studio/ufotable"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].studioId").value(3))
-                .andExpect(jsonPath("$[1].studioId").value(3));
+                .andExpect(jsonPath("$[0].studio").value(containsStringIgnoringCase("ufotable")))
+                .andExpect(jsonPath("$[1].studio").value(containsStringIgnoringCase("ufotable")));
     }
 
     @Test
@@ -235,14 +235,14 @@ class SeriesControllerUnitTest {
 
     @Test
     public void whenPostSeries_thenReturnJsonSeries() throws Exception {
-        Series seriesStudio4Series5 = new Series(4, "Neon Genesis Evangelion", "psychological drama", false, 26, 1, 1995);
+        Series seriesStudio4Series5 = new Series("Gainax", "Neon Genesis Evangelion", "psychological drama", false, 26, 1, 1995);
 
         mockMvc.perform(post("/series")
                         .content(mapper.writeValueAsString(seriesStudio4Series5))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.studioId").value(4))
+                .andExpect(jsonPath("$.studio").value(containsStringIgnoringCase("gainax")))
                 .andExpect(jsonPath("$.name").value("Neon Genesis Evangelion"))
                 .andExpect(jsonPath("$.genre").value("psychological drama"))
                 .andExpect(jsonPath("$.episodes").value(26))
@@ -252,7 +252,7 @@ class SeriesControllerUnitTest {
 
     @Test
     public void whenPutSeries_thenReturnJsonSeries() throws Exception {
-        Series seriesStudio1Movie1Mod = new Series(1, "Your name", "romance", true, 1, 2016);
+        Series seriesStudio1Movie1Mod = new Series("CoMix Wave Films", "Your name", "romance", true, 1, 2016);
 
         given(seriesRepository.findSeriesById("000011112222333344445555")).willReturn(seriesStudio1Movie1);
 
@@ -264,7 +264,7 @@ class SeriesControllerUnitTest {
                 .andExpect(jsonPath("$.genre").value("romance"));
 
 
-        Series seriesStudio2Series1Mod = new Series(2, "Jujutsu Kaisen", false, 25, 2020);
+        Series seriesStudio2Series1Mod = new Series("MAPPA", "Jujutsu Kaisen", false, 25, 2020);
 
         given(seriesRepository.findSeriesById("555544443333222211110000")).willReturn(seriesStudio2Series1);
 

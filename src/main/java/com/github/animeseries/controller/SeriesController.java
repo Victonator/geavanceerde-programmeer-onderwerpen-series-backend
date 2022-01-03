@@ -18,11 +18,11 @@ public class SeriesController {
     public void fillDB() {
         seriesRepository.deleteAll();
 
-        seriesRepository.save(new Series(1, "Your name", "drama", true, 1, 2016));
-        seriesRepository.save(new Series(2, "Jujutsu Kaisen", "supernatural", false, 24, 1, 2020));
-        seriesRepository.save(new Series(2, "The Idaten Deities Know Only Peace", "action", false, 11, 1, 2021));
-        seriesRepository.save(new Series(3, "Demon Slayer: Kimetsu no Yaiba", "adventure", false, 26, 1, 2019));
-        seriesRepository.save(new Series(3, "Demon Slayer: Kimetsu no Yaiba - Entertainment District Arc", "adventure", false, 5, 2021));
+        seriesRepository.save(new Series("CoMix Wave Films", "Your name", "drama", true, 1, 2016));
+        seriesRepository.save(new Series("MAPPA", "Jujutsu Kaisen", "supernatural", false, 24, 1, 2020));
+        seriesRepository.save(new Series("MAPPA", "The Idaten Deities Know Only Peace", "action", false, 11, 1, 2021));
+        seriesRepository.save(new Series("Ufotable", "Demon Slayer: Kimetsu no Yaiba", "adventure", false, 26, 1, 2019));
+        seriesRepository.save(new Series("Ufotable", "Demon Slayer: Kimetsu no Yaiba - Entertainment District Arc", "adventure", false, 5, 2021));
 
     }
 
@@ -42,9 +42,9 @@ public class SeriesController {
         }
     }
 
-    @GetMapping("/series/studio/{studioId}")
-    public List<Series> getSeriesByStudioId(@PathVariable Integer studioId) {
-        return seriesRepository.findSeriesByStudioId(studioId);
+    @GetMapping("/series/studio/{studioName}")
+    public List<Series> getSeriesByStudioId(@PathVariable String studioName) {
+        return seriesRepository.findSeriesByStudioContainingIgnoreCase(studioName);
     }
 
     @GetMapping("/series/year")
@@ -88,7 +88,7 @@ public class SeriesController {
     public Series modifySeries(@RequestBody Series series, @PathVariable String id) {
         Series oldSeries = seriesRepository.findSeriesById(id);
 
-        oldSeries.setStudioId(series.getStudioId());
+        oldSeries.setStudio(series.getStudio());
         oldSeries.setName(series.getName());
         oldSeries.setMovie(series.getMovie());
         oldSeries.setEpisodes(series.getEpisodes());

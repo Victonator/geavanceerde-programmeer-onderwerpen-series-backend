@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface SeriesRepository extends MongoRepository<Series, String> {
     Series findSeriesById(String id);
-    List<Series> findSeriesByStudioId(Integer studioId);
+    List<Series> findSeriesByStudioContainingIgnoreCase(String studioName);
     List<Series> findSeriesByIsMovie(Boolean isMovie);
     List<Series> findSeriesByGenre(String genre);
     List<Series> findSeriesByGenreContainingIgnoreCase(String genreQuery);

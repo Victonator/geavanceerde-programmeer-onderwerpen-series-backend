@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Series {
     @Id
     private String id;
-    private Integer studioId;
+    private String studio;
     private String name;
     private String genre;
     private Boolean isMovie;
@@ -17,16 +17,16 @@ public class Series {
 
     public Series(){};
 
-    public Series(Integer studioId, String name, Boolean isMovie, Integer episodes, Integer yearAired) {
-        this.studioId = studioId;
+    public Series(String studio, String name, Boolean isMovie, Integer episodes, Integer yearAired) {
+        this.studio = studio;
         this.name = name;
         this.isMovie = isMovie;
         this.episodes = episodes;
         this.yearAired = yearAired;
     }
 
-    public Series(Integer studioId, String name, String genre, Boolean isMovie, Integer episodes, Integer yearAired) {
-        this.studioId = studioId;
+    public Series(String studio, String name, String genre, Boolean isMovie, Integer episodes, Integer yearAired) {
+        this.studio = studio;
         this.name = name;
         this.genre = genre;
         this.isMovie = isMovie;
@@ -34,8 +34,8 @@ public class Series {
         this.yearAired = yearAired;
     }
 
-    public Series(Integer studioId, String name, Boolean isMovie, Integer episodes, Integer season, Integer yearAired) {
-        this.studioId = studioId;
+    public Series(String studio, String name, Boolean isMovie, Integer episodes, Integer season, Integer yearAired) {
+        this.studio = studio;
         this.name = name;
         this.isMovie = isMovie;
         this.episodes = episodes;
@@ -43,8 +43,8 @@ public class Series {
         this.yearAired = yearAired;
     }
 
-    public Series(Integer studioId, String name, String genre, Boolean isMovie, Integer episodes, Integer season, Integer yearAired) {
-        this.studioId = studioId;
+    public Series(String studio, String name, String genre, Boolean isMovie, Integer episodes, Integer season, Integer yearAired) {
+        this.studio = studio;
         this.name = name;
         this.genre = genre;
         this.isMovie = isMovie;
@@ -61,12 +61,12 @@ public class Series {
         this.id = id;
     }
 
-    public Integer getStudioId() {
-        return studioId;
+    public String getStudio() {
+        return studio;
     }
 
-    public void setStudioId(Integer studioId) {
-        this.studioId = studioId;
+    public void setStudio(String studio) {
+        this.studio = studio;
     }
 
     public String getName() {
