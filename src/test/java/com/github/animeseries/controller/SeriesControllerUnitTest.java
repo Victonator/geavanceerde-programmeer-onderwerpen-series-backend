@@ -82,6 +82,80 @@ class SeriesControllerUnitTest {
     }
 
     @Test
+    public void givenSeries_whenSearchAllSeriesByName_thenReturnJsonSeries() throws Exception {
+
+        List<Series> seriesSuList = new ArrayList<>();
+        List<Series> seriesXList = new ArrayList<>();
+        seriesSuList.add(seriesStudio2Series1);
+        seriesSuList.add(seriesStudio3Series3);
+        seriesSuList.add(seriesStudio3Series4);
+
+        given(seriesRepository.findSeriesByNameContainingIgnoreCase("su")).willReturn(seriesSuList);
+        given(seriesRepository.findSeriesByNameContainingIgnoreCase("x")).willReturn(seriesXList);
+
+        mockMvc.perform(get("/series?q=su"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0].name").value(containsStringIgnoringCase("su")))
+                .andExpect(jsonPath("$[1].name").value(containsStringIgnoringCase("su")))
+                .andExpect(jsonPath("$[2].name").value(containsStringIgnoringCase("su")));
+
+        mockMvc.perform(get("/series?q=x"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    public void givenSeries_whenSearchGetSeriesByExactName_thenReturnJsonSeries() throws Exception {
+
+        given(seriesRepository.getSeriesByName("Your name")).willReturn(seriesStudio1Movie1);
+        given(seriesRepository.getSeriesByName("Jujutsu Kaisen")).willReturn(seriesStudio2Series1);
+
+        mockMvc.perform(get("/series/name/Your name"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Your name"));
+
+        mockMvc.perform(get("/series/name/Jujutsu Kaisen"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Jujutsu Kaisen"));
+    }
+
+    @Test
+    public void givenSeries_whenSearchAllSeriesByNameAndIsMovie_thenReturnJsonSeries() throws Exception {
+        List<Series> seriesMovieY = new ArrayList<>();
+        List<Series> seriesSeriesY = new ArrayList<>();
+        seriesMovieY.add(seriesStudio1Movie1);
+        seriesSeriesY.add(seriesStudio2Series2);
+        seriesSeriesY.add(seriesStudio3Series3);
+        seriesSeriesY.add(seriesStudio3Series4);
+
+        given(seriesRepository.findSeriesByNameContainingIgnoreCaseAndIsMovie("y", true)).willReturn(seriesMovieY);
+        given(seriesRepository.findSeriesByNameContainingIgnoreCaseAndIsMovie("y", false)).willReturn(seriesSeriesY);
+
+        mockMvc.perform(get("/series?q=y&isMovie=true"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].movie").value(true))
+                .andExpect(jsonPath("$[0].name").value(containsStringIgnoringCase("y")));
+
+        mockMvc.perform(get("/series?q=y&isMovie=false"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0].movie").value(false))
+                .andExpect(jsonPath("$[0].name").value(containsStringIgnoringCase("y")))
+                .andExpect(jsonPath("$[1].movie").value(false))
+                .andExpect(jsonPath("$[1].name").value(containsStringIgnoringCase("y")))
+                .andExpect(jsonPath("$[2].movie").value(false))
+                .andExpect(jsonPath("$[2].name").value(containsStringIgnoringCase("y")));
+    }
+
+    @Test
     public void givenSeries_whenGetAllSeriesByStudio_thenReturnJsonSeries() throws Exception {
 
         List<Series> seriesStudio1List = new ArrayList<>();

@@ -42,6 +42,11 @@ public class SeriesController {
         }
     }
 
+    @GetMapping("/series/name/{seriesName}")
+    public Series getSeriesByName(@PathVariable String seriesName) {
+        return seriesRepository.getSeriesByName(seriesName);
+    }
+
     @GetMapping("/series/studio/{studioName}")
     public List<Series> getSeriesByStudioId(@PathVariable String studioName) {
         return seriesRepository.findSeriesByStudioContainingIgnoreCase(studioName);

@@ -96,6 +96,19 @@ class SeriesControllerIntegrationTests {
     }
 
     @Test
+    public void givenSeries_whenSearchGetSeriesByExactName_thenReturnJsonSeries() throws Exception {
+        mockMvc.perform(get("/series/name/Your name"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Your name"));
+
+        mockMvc.perform(get("/series/name/Jujutsu Kaisen"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Jujutsu Kaisen"));
+    }
+
+    @Test
     public void givenSeries_whenSearchAllSeriesByNameAndIsMovie_thenReturnJsonSeries() throws Exception {
         mockMvc.perform(get("/series?q=y&isMovie=true"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
